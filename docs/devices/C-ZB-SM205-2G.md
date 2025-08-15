@@ -18,7 +18,7 @@ pageClass: device-page
 | Model | C-ZB-SM205-2G  |
 | Vendor  | [Candeo](/supported-devices/#v=Candeo)  |
 | Description | Smart 2 gang switch module |
-| Exposes | switch (state), power_on_behavior, power, voltage, current, energy, linkquality |
+| Exposes | external_switch_type, switch (state), power_on_behavior, power, voltage, current, energy |
 | Picture | ![Candeo C-ZB-SM205-2G](https://www.zigbee2mqtt.io/images/devices/C-ZB-SM205-2G.png) |
 
 
@@ -52,6 +52,12 @@ pageClass: device-page
 
 
 ## Exposes
+
+### External switch type (enum, e11 endpoint)
+Value can be found in the published state on the `external_switch_type_e11` property.
+To read (`/get`) the value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/get` with payload `{"external_switch_type_e11": ""}`.
+To write (`/set`) a value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/set` with payload `{"external_switch_type_e11": NEW_VALUE}`.
+The possible values are: `momentary`, `toggle`.
 
 ### Switch (l1 endpoint)
 The current state of this switch is in the published state under the `state_l1` property (value is `ON` or `OFF`).
@@ -116,11 +122,4 @@ Value can be found in the published state on the `energy` property.
 To read (`/get`) the value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/get` with payload `{"energy": ""}`.
 It's not possible to write (`/set`) this value.
 The unit of this value is `kWh`.
-
-### Linkquality (numeric)
-Link quality (signal strength).
-Value can be found in the published state on the `linkquality` property.
-It's not possible to read (`/get`) or write (`/set`) this value.
-The minimal value is `0` and the maximum value is `255`.
-The unit of this value is `lqi`.
 

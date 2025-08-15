@@ -18,7 +18,7 @@ pageClass: device-page
 | Model | VZM30-SN  |
 | Vendor  | [Inovelli](/supported-devices/#v=Inovelli)  |
 | Description | On/off switch |
-| Exposes | light (state, brightness), led_effect, individual_led_effect, dimmingSpeedUpRemote, dimmingSpeedUpLocal, rampRateOffToOnRemote, rampRateOffToOnLocal, dimmingSpeedDownRemote, dimmingSpeedDownLocal, rampRateOnToOffRemote, rampRateOnToOffLocal, invertSwitch, autoTimerOff, defaultLevelLocal, defaultLevelRemote, stateAfterPowerRestored, loadLevelIndicatorTimeout, switchType, internalTemperature, overheat, buttonDelay, deviceBindNumber, smartBulbMode, doubleTapUpToParam55, doubleTapDownToParam56, brightnessLevelForDoubleTapUp, brightnessLevelForDoubleTapDown, ledColorWhenOn, ledColorWhenOff, ledIntensityWhenOn, ledIntensityWhenOff, singleTapBehavior, fanControlMode, lowLevelForFanControlMode, mediumLevelForFanControlMode, highLevelForFanControlMode, ledColorForFanControlMode, auxSwitchUniqueScenes, bindingOffToOnSyncLevel, localProtection, remoteProtection, onOffLedMode, firmwareUpdateInProgressIndicator, defaultLed1ColorWhenOn, defaultLed1ColorWhenOff, defaultLed1IntensityWhenOn, defaultLed1IntensityWhenOff, defaultLed2ColorWhenOn, defaultLed2ColorWhenOff, defaultLed2IntensityWhenOn, defaultLed2IntensityWhenOff, defaultLed3ColorWhenOn, defaultLed3ColorWhenOff, defaultLed3IntensityWhenOn, defaultLed3IntensityWhenOff, defaultLed4ColorWhenOn, defaultLed4ColorWhenOff, defaultLed4IntensityWhenOn, defaultLed4IntensityWhenOff, defaultLed5ColorWhenOn, defaultLed5ColorWhenOff, defaultLed5IntensityWhenOn, defaultLed5IntensityWhenOff, defaultLed6ColorWhenOn, defaultLed6ColorWhenOff, defaultLed6IntensityWhenOn, defaultLed6IntensityWhenOff, defaultLed7ColorWhenOn, defaultLed7ColorWhenOff, defaultLed7IntensityWhenOn, defaultLed7IntensityWhenOff, doubleTapClearNotifications, fanLedLevelType, ledBarScaling, activePowerReports, periodicPowerAndEnergyReports, activeEnergyReports, identify, temperature, humidity, power, voltage, current, energy, action, linkquality |
+| Exposes | light (state, brightness), led_effect, individual_led_effect, dimmingSpeedUpRemote, dimmingSpeedUpLocal, rampRateOffToOnRemote, rampRateOffToOnLocal, dimmingSpeedDownRemote, dimmingSpeedDownLocal, rampRateOnToOffRemote, rampRateOnToOffLocal, invertSwitch, autoTimerOff, defaultLevelLocal, defaultLevelRemote, stateAfterPowerRestored, loadLevelIndicatorTimeout, switchType, internalTemperature, overheat, buttonDelay, deviceBindNumber, smartBulbMode, doubleTapUpToParam55, doubleTapDownToParam56, brightnessLevelForDoubleTapUp, brightnessLevelForDoubleTapDown, ledColorWhenOn, ledColorWhenOff, ledIntensityWhenOn, ledIntensityWhenOff, singleTapBehavior, fanControlMode, lowLevelForFanControlMode, mediumLevelForFanControlMode, highLevelForFanControlMode, ledColorForFanControlMode, auxSwitchUniqueScenes, bindingOffToOnSyncLevel, localProtection, remoteProtection, onOffLedMode, firmwareUpdateInProgressIndicator, defaultLed1ColorWhenOn, defaultLed1ColorWhenOff, defaultLed1IntensityWhenOn, defaultLed1IntensityWhenOff, defaultLed2ColorWhenOn, defaultLed2ColorWhenOff, defaultLed2IntensityWhenOn, defaultLed2IntensityWhenOff, defaultLed3ColorWhenOn, defaultLed3ColorWhenOff, defaultLed3IntensityWhenOn, defaultLed3IntensityWhenOff, defaultLed4ColorWhenOn, defaultLed4ColorWhenOff, defaultLed4IntensityWhenOn, defaultLed4IntensityWhenOff, defaultLed5ColorWhenOn, defaultLed5ColorWhenOff, defaultLed5IntensityWhenOn, defaultLed5IntensityWhenOff, defaultLed6ColorWhenOn, defaultLed6ColorWhenOff, defaultLed6IntensityWhenOn, defaultLed6IntensityWhenOff, defaultLed7ColorWhenOn, defaultLed7ColorWhenOff, defaultLed7IntensityWhenOn, defaultLed7IntensityWhenOff, fanTimerMode, doubleTapClearNotifications, fanLedLevelType, ledBarScaling, activePowerReports, periodicPowerAndEnergyReports, activeEnergyReports, outputMode, identify, temperature, humidity, power, voltage, current, energy, action |
 | Picture | ![Inovelli VZM30-SN](https://www.zigbee2mqtt.io/images/devices/VZM30-SN.png) |
 
 
@@ -61,6 +61,8 @@ This device supports OTA updates, for more information see [OTA updates](../guid
 
 * `identify_timeout`: Sets duration of identification procedure in seconds (i.e., how long device would flash). Value ranges from 1 to 30 seconds (default 3). The value must be a number with a minimum value of `1` and with a with a maximum value of `30`
 
+* `transition`: Controls the transition time (in seconds) of on/off, brightness, color temperature (if applicable) and color (if applicable) changes. Defaults to `0` (no transition). The value must be a number with a minimum value of `0`
+
 * `state_action`: State actions will also be published as 'action' when true (default false). The value must be `true` or `false`
 
 
@@ -74,6 +76,23 @@ This light supports the following features: `state`, `brightness`.
 #### Transition
 For all of the above mentioned features it is possible to do a transition of the value over time. To do this add an additional property `transition` to the payload which is the transition time in seconds.
 Examples: `{"brightness":156,"transition":3}`, `{"color_temp":241,"transition":1}`.
+
+#### Moving/stepping
+Instead of setting a value (e.g. brightness) directly it is also possible to:
+- move: this will automatically move the value over time, to stop send value `stop` or `0`.
+- step: this will increment/decrement the current value by the given one.
+
+The direction of move and step can be either up or down, provide a negative value to move/step down, a positive value to move/step up.
+To do this send a payload like below to `zigbee2mqtt/FRIENDLY_NAME/set`
+
+**NOTE**: brightness move/step will stop at the minimum brightness and won't turn on the light when it's off. In this case use `brightness_move_onoff`/`brightness_step_onoff`
+```js
+{
+  "brightness_move": -40, // Starts moving brightness down at 40 units per second
+  "brightness_move": 0, // Stop moving brightness
+  "brightness_step": 40 // Increases brightness by 40
+}
+````
 
 ### Led effect (composite)
 Can be set by publishing to `zigbee2mqtt/FRIENDLY_NAME/set` with payload `{"led_effect": {"effect": VALUE, "color": VALUE, "level": VALUE, "duration": VALUE}}`
@@ -390,14 +409,14 @@ To write (`/set`) a value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/
 The minimal value is `0` and the maximum value is `255`.
 
 ### DefaultLed1IntensityWhenOn (numeric)
-Intesity of LED strip when on. 101 = Synchronized with default all LED strip intensity parameter..
+Intensity of LED strip when on. 101 = Synchronized with default all LED strip intensity parameter..
 Value can be found in the published state on the `defaultLed1IntensityWhenOn` property.
 To read (`/get`) the value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/get` with payload `{"defaultLed1IntensityWhenOn": ""}`.
 To write (`/set`) a value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/set` with payload `{"defaultLed1IntensityWhenOn": NEW_VALUE}`.
 The minimal value is `0` and the maximum value is `101`.
 
 ### DefaultLed1IntensityWhenOff (numeric)
-Intesity of LED strip when off. 101 = Synchronized with default all LED strip intensity parameter..
+Intensity of LED strip when off. 101 = Synchronized with default all LED strip intensity parameter..
 Value can be found in the published state on the `defaultLed1IntensityWhenOff` property.
 To read (`/get`) the value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/get` with payload `{"defaultLed1IntensityWhenOff": ""}`.
 To write (`/set`) a value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/set` with payload `{"defaultLed1IntensityWhenOff": NEW_VALUE}`.
@@ -418,14 +437,14 @@ To write (`/set`) a value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/
 The minimal value is `0` and the maximum value is `255`.
 
 ### DefaultLed2IntensityWhenOn (numeric)
-Intesity of LED strip when on. 101 = Synchronized with default all LED strip intensity parameter..
+Intensity of LED strip when on. 101 = Synchronized with default all LED strip intensity parameter..
 Value can be found in the published state on the `defaultLed2IntensityWhenOn` property.
 To read (`/get`) the value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/get` with payload `{"defaultLed2IntensityWhenOn": ""}`.
 To write (`/set`) a value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/set` with payload `{"defaultLed2IntensityWhenOn": NEW_VALUE}`.
 The minimal value is `0` and the maximum value is `101`.
 
 ### DefaultLed2IntensityWhenOff (numeric)
-Intesity of LED strip when off. 101 = Synchronized with default all LED strip intensity parameter..
+Intensity of LED strip when off. 101 = Synchronized with default all LED strip intensity parameter..
 Value can be found in the published state on the `defaultLed2IntensityWhenOff` property.
 To read (`/get`) the value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/get` with payload `{"defaultLed2IntensityWhenOff": ""}`.
 To write (`/set`) a value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/set` with payload `{"defaultLed2IntensityWhenOff": NEW_VALUE}`.
@@ -446,14 +465,14 @@ To write (`/set`) a value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/
 The minimal value is `0` and the maximum value is `255`.
 
 ### DefaultLed3IntensityWhenOn (numeric)
-Intesity of LED strip when on. 101 = Synchronized with default all LED strip intensity parameter..
+Intensity of LED strip when on. 101 = Synchronized with default all LED strip intensity parameter..
 Value can be found in the published state on the `defaultLed3IntensityWhenOn` property.
 To read (`/get`) the value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/get` with payload `{"defaultLed3IntensityWhenOn": ""}`.
 To write (`/set`) a value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/set` with payload `{"defaultLed3IntensityWhenOn": NEW_VALUE}`.
 The minimal value is `0` and the maximum value is `101`.
 
 ### DefaultLed3IntensityWhenOff (numeric)
-Intesity of LED strip when off. 101 = Synchronized with default all LED strip intensity parameter..
+Intensity of LED strip when off. 101 = Synchronized with default all LED strip intensity parameter..
 Value can be found in the published state on the `defaultLed3IntensityWhenOff` property.
 To read (`/get`) the value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/get` with payload `{"defaultLed3IntensityWhenOff": ""}`.
 To write (`/set`) a value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/set` with payload `{"defaultLed3IntensityWhenOff": NEW_VALUE}`.
@@ -474,14 +493,14 @@ To write (`/set`) a value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/
 The minimal value is `0` and the maximum value is `255`.
 
 ### DefaultLed4IntensityWhenOn (numeric)
-Intesity of LED strip when on. 101 = Synchronized with default all LED strip intensity parameter..
+Intensity of LED strip when on. 101 = Synchronized with default all LED strip intensity parameter..
 Value can be found in the published state on the `defaultLed4IntensityWhenOn` property.
 To read (`/get`) the value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/get` with payload `{"defaultLed4IntensityWhenOn": ""}`.
 To write (`/set`) a value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/set` with payload `{"defaultLed4IntensityWhenOn": NEW_VALUE}`.
 The minimal value is `0` and the maximum value is `101`.
 
 ### DefaultLed4IntensityWhenOff (numeric)
-Intesity of LED strip when off. 101 = Synchronized with default all LED strip intensity parameter..
+Intensity of LED strip when off. 101 = Synchronized with default all LED strip intensity parameter..
 Value can be found in the published state on the `defaultLed4IntensityWhenOff` property.
 To read (`/get`) the value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/get` with payload `{"defaultLed4IntensityWhenOff": ""}`.
 To write (`/set`) a value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/set` with payload `{"defaultLed4IntensityWhenOff": NEW_VALUE}`.
@@ -502,14 +521,14 @@ To write (`/set`) a value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/
 The minimal value is `0` and the maximum value is `255`.
 
 ### DefaultLed5IntensityWhenOn (numeric)
-Intesity of LED strip when on. 101 = Synchronized with default all LED strip intensity parameter..
+Intensity of LED strip when on. 101 = Synchronized with default all LED strip intensity parameter..
 Value can be found in the published state on the `defaultLed5IntensityWhenOn` property.
 To read (`/get`) the value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/get` with payload `{"defaultLed5IntensityWhenOn": ""}`.
 To write (`/set`) a value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/set` with payload `{"defaultLed5IntensityWhenOn": NEW_VALUE}`.
 The minimal value is `0` and the maximum value is `101`.
 
 ### DefaultLed5IntensityWhenOff (numeric)
-Intesity of LED strip when off. 101 = Synchronized with default all LED strip intensity parameter..
+Intensity of LED strip when off. 101 = Synchronized with default all LED strip intensity parameter..
 Value can be found in the published state on the `defaultLed5IntensityWhenOff` property.
 To read (`/get`) the value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/get` with payload `{"defaultLed5IntensityWhenOff": ""}`.
 To write (`/set`) a value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/set` with payload `{"defaultLed5IntensityWhenOff": NEW_VALUE}`.
@@ -530,14 +549,14 @@ To write (`/set`) a value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/
 The minimal value is `0` and the maximum value is `255`.
 
 ### DefaultLed6IntensityWhenOn (numeric)
-Intesity of LED strip when on. 101 = Synchronized with default all LED strip intensity parameter..
+Intensity of LED strip when on. 101 = Synchronized with default all LED strip intensity parameter..
 Value can be found in the published state on the `defaultLed6IntensityWhenOn` property.
 To read (`/get`) the value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/get` with payload `{"defaultLed6IntensityWhenOn": ""}`.
 To write (`/set`) a value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/set` with payload `{"defaultLed6IntensityWhenOn": NEW_VALUE}`.
 The minimal value is `0` and the maximum value is `101`.
 
 ### DefaultLed6IntensityWhenOff (numeric)
-Intesity of LED strip when off. 101 = Synchronized with default all LED strip intensity parameter..
+Intensity of LED strip when off. 101 = Synchronized with default all LED strip intensity parameter..
 Value can be found in the published state on the `defaultLed6IntensityWhenOff` property.
 To read (`/get`) the value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/get` with payload `{"defaultLed6IntensityWhenOff": ""}`.
 To write (`/set`) a value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/set` with payload `{"defaultLed6IntensityWhenOff": NEW_VALUE}`.
@@ -558,18 +577,25 @@ To write (`/set`) a value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/
 The minimal value is `0` and the maximum value is `255`.
 
 ### DefaultLed7IntensityWhenOn (numeric)
-Intesity of LED strip when on. 101 = Synchronized with default all LED strip intensity parameter..
+Intensity of LED strip when on. 101 = Synchronized with default all LED strip intensity parameter..
 Value can be found in the published state on the `defaultLed7IntensityWhenOn` property.
 To read (`/get`) the value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/get` with payload `{"defaultLed7IntensityWhenOn": ""}`.
 To write (`/set`) a value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/set` with payload `{"defaultLed7IntensityWhenOn": NEW_VALUE}`.
 The minimal value is `0` and the maximum value is `101`.
 
 ### DefaultLed7IntensityWhenOff (numeric)
-Intesity of LED strip when off. 101 = Synchronized with default all LED strip intensity parameter..
+Intensity of LED strip when off. 101 = Synchronized with default all LED strip intensity parameter..
 Value can be found in the published state on the `defaultLed7IntensityWhenOff` property.
 To read (`/get`) the value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/get` with payload `{"defaultLed7IntensityWhenOff": ""}`.
 To write (`/set`) a value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/set` with payload `{"defaultLed7IntensityWhenOff": NEW_VALUE}`.
 The minimal value is `0` and the maximum value is `101`.
+
+### FanTimerMode (enum)
+Enable or disable advanced timer mode to have the switch act like a bathroom fan timer.
+Value can be found in the published state on the `fanTimerMode` property.
+To read (`/get`) the value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/get` with payload `{"fanTimerMode": ""}`.
+To write (`/set`) a value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/set` with payload `{"fanTimerMode": NEW_VALUE}`.
+The possible values are: `Disabled`, `Enabled`.
 
 ### DoubleTapClearNotifications (enum)
 Double-Tap the Config button to clear notifications..
@@ -613,6 +639,13 @@ Value can be found in the published state on the `activeEnergyReports` property.
 To read (`/get`) the value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/get` with payload `{"activeEnergyReports": ""}`.
 To write (`/set`) a value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/set` with payload `{"activeEnergyReports": NEW_VALUE}`.
 The minimal value is `0` and the maximum value is `32767`.
+
+### OutputMode (enum)
+Use device as a Dimmer or an On/Off switch. Only applies when controlling bound devices..
+Value can be found in the published state on the `outputMode` property.
+To read (`/get`) the value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/get` with payload `{"outputMode": ""}`.
+To write (`/set`) a value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/set` with payload `{"outputMode": NEW_VALUE}`.
+The possible values are: `Dimmer`, `On/Off`.
 
 ### Identify (enum)
 Initiate device identification.
@@ -668,11 +701,4 @@ Triggered action (e.g. a button click).
 Value can be found in the published state on the `action` property.
 It's not possible to read (`/get`) or write (`/set`) this value.
 The possible values are: `down_single`, `up_single`, `config_single`, `down_release`, `up_release`, `config_release`, `down_held`, `up_held`, `config_held`, `down_double`, `up_double`, `config_double`, `down_triple`, `up_triple`, `config_triple`, `down_quadruple`, `up_quadruple`, `config_quadruple`, `down_quintuple`, `up_quintuple`, `config_quintuple`.
-
-### Linkquality (numeric)
-Link quality (signal strength).
-Value can be found in the published state on the `linkquality` property.
-It's not possible to read (`/get`) or write (`/set`) this value.
-The minimal value is `0` and the maximum value is `255`.
-The unit of this value is `lqi`.
 

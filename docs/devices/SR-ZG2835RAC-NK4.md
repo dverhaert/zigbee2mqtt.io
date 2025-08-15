@@ -18,7 +18,7 @@ pageClass: device-page
 | Model | SR-ZG2835RAC-NK4  |
 | Vendor  | [Sunricher](/supported-devices/#v=Sunricher)  |
 | Description | 4-Key zigbee rotary & push button smart dimmer |
-| Exposes | light (state, brightness), effect, power_on_behavior, power, voltage, current, energy, action, linkquality |
+| Exposes | light (state, brightness), effect, power_on_behavior, power, voltage, current, energy, action |
 | Picture | ![Sunricher SR-ZG2835RAC-NK4](https://www.zigbee2mqtt.io/images/devices/SR-ZG2835RAC-NK4.png) |
 
 
@@ -79,7 +79,7 @@ The direction of move and step can be either up or down, provide a negative valu
 To do this send a payload like below to `zigbee2mqtt/FRIENDLY_NAME/set`
 
 **NOTE**: brightness move/step will stop at the minimum brightness and won't turn on the light when it's off. In this case use `brightness_move_onoff`/`brightness_step_onoff`
-````js
+```js
 {
   "brightness_move": -40, // Starts moving brightness down at 40 units per second
   "brightness_move": 0, // Stop moving brightness
@@ -134,11 +134,4 @@ Triggered action (e.g. a button click).
 Value can be found in the published state on the `action` property.
 It's not possible to read (`/get`) or write (`/set`) this value.
 The possible values are: `recall`, `store`, `add`, `remove`, `remove_all`.
-
-### Linkquality (numeric)
-Link quality (signal strength).
-Value can be found in the published state on the `linkquality` property.
-It's not possible to read (`/get`) or write (`/set`) this value.
-The minimal value is `0` and the maximum value is `255`.
-The unit of this value is `lqi`.
 

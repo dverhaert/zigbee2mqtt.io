@@ -18,7 +18,7 @@ pageClass: device-page
 | Model | RTCGQ14LM  |
 | Vendor  | [Aqara](/supported-devices/#v=Aqara)  |
 | Description | Motion sensor P1 |
-| Exposes | occupancy, illuminance, motion_sensitivity, detection_interval, trigger_indicator, device_temperature, battery, voltage, linkquality |
+| Exposes | occupancy, illuminance, motion_sensitivity, detection_interval, trigger_indicator, device_temperature, battery, voltage |
 | Picture | ![Aqara RTCGQ14LM](https://www.zigbee2mqtt.io/images/devices/RTCGQ14LM.png) |
 | White-label | Aqara MS-S02 |
 
@@ -41,7 +41,9 @@ After this the device will automatically join. If this doesn't work, try with a 
 
 ![RTCGQ14LM pairing](../images/pairing/RTCGQ14LM_pairing.jpg)
 
-*Note: When you fail to pair a device, try replacing the battery, this could solve the problem.*
+*Note: When you fail to pair a device, try:
+- replacing the battery
+- to hold the reset button on the Aqara P1 sensor +- 5 seconds, wait for the lights to flash, just after that activate "Permit joining" to the closest zigbee router (or your coordinator) (credits: https://community.home-assistant.io/t/aqara-p1-will-not-connect/620395/4)
 <!-- Notes END: Do not edit below this line -->
 
 
@@ -115,11 +117,4 @@ Voltage of the battery in millivolts.
 Value can be found in the published state on the `voltage` property.
 It's not possible to read (`/get`) or write (`/set`) this value.
 The unit of this value is `mV`.
-
-### Linkquality (numeric)
-Link quality (signal strength).
-Value can be found in the published state on the `linkquality` property.
-It's not possible to read (`/get`) or write (`/set`) this value.
-The minimal value is `0` and the maximum value is `255`.
-The unit of this value is `lqi`.
 

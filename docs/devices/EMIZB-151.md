@@ -18,7 +18,7 @@ pageClass: device-page
 | Model | EMIZB-151  |
 | Vendor  | [Frient](/supported-devices/#v=Frient)  |
 | Description | HAN P1 power-meter sensor |
-| Exposes | power, voltage, current, energy, power_phase_b, power_phase_c, voltage_phase_b, voltage_phase_c, current_phase_b, current_phase_c, linkquality |
+| Exposes | power, voltage, current, energy, power_phase_b, power_phase_c, voltage_phase_b, voltage_phase_c, current_phase_b, current_phase_c, current_neutral |
 | Picture | ![Frient EMIZB-151](https://www.zigbee2mqtt.io/images/devices/EMIZB-151.png) |
 
 
@@ -30,6 +30,9 @@ Steps for resetting
 4. After a succesful reset, the yellow LED will start flashing which indicates network search.
 <!-- Notes END: Do not edit below this line -->
 
+
+## OTA updates
+This device supports OTA updates, for more information see [OTA updates](../guide/usage/ota_updates.md).
 
 
 ## Options
@@ -74,6 +77,10 @@ Steps for resetting
 * `current_phase_c_calibration`: Calibrates the current_phase_c value (percentual offset), takes into effect on next report of device. The value must be a number.
 
 * `current_phase_c_precision`: Number of digits after decimal point for current_phase_c, takes into effect on next report of device. This option can only decrease the precision, not increase it. The value must be a number with a minimum value of `0` and with a with a maximum value of `3`
+
+* `current_neutral_calibration`: Calibrates the current_neutral value (percentual offset), takes into effect on next report of device. The value must be a number.
+
+* `current_neutral_precision`: Number of digits after decimal point for current_neutral, takes into effect on next report of device. This option can only decrease the precision, not increase it. The value must be a number with a minimum value of `0` and with a with a maximum value of `3`
 
 
 ## Exposes
@@ -148,10 +155,10 @@ To read (`/get`) the value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME
 It's not possible to write (`/set`) this value.
 The unit of this value is `A`.
 
-### Linkquality (numeric)
-Link quality (signal strength).
-Value can be found in the published state on the `linkquality` property.
-It's not possible to read (`/get`) or write (`/set`) this value.
-The minimal value is `0` and the maximum value is `255`.
-The unit of this value is `lqi`.
+### Current neutral (numeric)
+Instantaneous measured electrical current on neutral.
+Value can be found in the published state on the `current_neutral` property.
+To read (`/get`) the value publish a message to topic `zigbee2mqtt/FRIENDLY_NAME/get` with payload `{"current_neutral": ""}`.
+It's not possible to write (`/set`) this value.
+The unit of this value is `A`.
 
